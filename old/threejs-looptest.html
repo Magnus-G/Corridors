@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>My first three.js app</title>
+    <style>
+      body { margin: 0;}
+      canvas { width: 100%; height: 100%;}
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
+    <script src="js/three.js"></script>
+    
+    <script>
+
+    var radius = 100;
+    var constant = 0.1;
+    var elapsedTime = 1;
+
+      var renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("myCanvas"), antialias: true });
+      renderer.setClearColor(0x111);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 3000);
+      camera.position.set(0, 0, 100);
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+      var scene = new THREE.Scene();
+
+
+      var light = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(light);
+      var light1 = new THREE.PointLight(0xffffff, 0.5);
+      scene.add(light1);
+
+      var add = 1;
+      var randomNewDir;
+      var xOld = 0;
+      var yOld = 0;
+      var zOld = 20;
+      var x = 0.01;
+      var y = 0;
+      var z = 20;
+      var oldAxis = 1; // tre möjliga vägar
+      var cameFrom;
+
+      // STAIRS
+      var thisIsAStairCase;
+      var noOfSteps;
+      var stairsHeight = 0.4;
+      var stairsWidth = 1;
+
+var hej = 100;
+var steps = 0;
+        
+      var render = function () {
+
+
+        var color = new THREE.Color("hsl(30, 10%, "+hej+"%)");
+
+        var material = new THREE.LineBasicMaterial({ color });
+        var geometry = new THREE.Geometry();
+        var line = new THREE.Line(geometry, material);
+
+        if (steps < 10) {
+          scene.add(line);
+          steps++;
+        }
+        
+        geometry.vertices.push(new THREE.Vector3(xOld, yOld, zOld));  
+        geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+
+        add              = Math.floor(Math.random() * 7) + 1;
+        randomNewDir     = Math.floor(Math.random() * 3) + 1;
+        cameFrom         = whereItCameFrom(xOld, yOld, zOld,x,y,z);
+        thisIsAStairCase = Math.floor(Math.random() * 4) + 1;
+
+        xOld = x;
+        yOld = y;
+        zOld = z; 
+
+        // CORRIDOR
+          if(cameFrom == "left") {
+            switch(randomNewDir) {
+              case 1: y -= add; break; case 2: y += add; break; case 3: x += add; break;
+            }
+          }
+
+          if(cameFrom == "right") {
+            switch(randomNewDir) {
+              case 1: y -= add; break; case 2: y += add; break; case 3: x -= add; break;
+            }
+          }
+
+          if(cameFrom == "bottom") {
+            switch(randomNewDir) {
+              case 1: x += add; break; case 2: x -= add; break; case 3: y += add; break;
+            }
+          }
+
+          if(cameFrom == "top") {
+            switch(randomNewDir) {
+              case 1: x += add; break; case 2: x -= add; break; case 3: y -= add; break;
+            }
+          }
+
+
+
+              // STAIRS
+              if(thisIsAStairCase == 1) {
+
+              if(hej > 30) {
+                hej = hej - 1;
+              }
+               noOfSteps = Math.floor(Math.random() * 10) + 8;
+                
+               if (cameFrom == "bottom") {
+                 for (var j = 0; j < noOfSteps; j++) {
+                   z -= stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   x += stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   y += stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   x -= stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                 }
+                 y += add;
+                 geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+
+               }
+
+               if (cameFrom == "right") {
+                 for (var j = 0; j < noOfSteps; j++) {
+                   z -= stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   y += stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   x -= stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   y -= stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                 }
+                 x += add;
+                 geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+               }
+
+               if (cameFrom == "top") {
+                 for (var j = 0; j < noOfSteps; j++) {
+                   z -= stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   x += stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   y -= stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   x -= stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                 }
+                 y -= add;
+                 geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+               }
+
+               if (cameFrom == "left") {
+                 for (var j = 0; j < noOfSteps; j++) {
+                   z -= stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   y += stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   x += stairsHeight;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                   y -= stairsWidth;
+                   geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+                 }
+                 x -= add;
+                 geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+               }           
+              }
+
+
+      
+
+          var geometryTest = new THREE.BoxGeometry(10,10,1);
+          var materialTest = new THREE.LineDashedMaterial({color: 0xffffff});
+          var mesh = new THREE.Mesh(geometryTest, materialTest);
+          mesh.position.set(0,20,0);
+          scene.add(mesh);
+
+            camera.position.x = line.position.x + radius * Math.cos( constant * elapsedTime );         
+            camera.position.z = line.position.z + radius * Math.sin( constant * elapsedTime );
+            camera.lookAt( line.position );
+            elapsedTime+= 0.001;
+
+            requestAnimationFrame( render );
+            renderer.render(scene, camera);
+          
+
+        // camera.rotation.z -= 0.001;
+        mesh.rotation.x -= 1.1;
+        line.rotation.x -= 1.1;
+      };
+
+      render();
+
+
+
+
+
+
+
+      function whereItCameFrom(xOld, yOld, zOld, x, y, z) {
+        if(xOld < x){
+          return "left"; // den kom från pos X mot neg X. från HÖGER
+        }
+        if(xOld > x){
+          return "right"; // den kom från neg X mot pos X. från VÄNSTER
+        }
+        if(xOld == x){
+          if(yOld < y){
+            return "bottom"; // den kom från neg Y mot pos Y. UNDERIFRÅN
+          }
+          if(yOld > y){
+            return "top"; // den kom från pos Y mot neg Y. OVANIFRÅN
+          }
+        }
+      };
+
+
+
+
+
+    </script>
+  </body>
+</html>

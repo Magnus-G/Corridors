@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0;}
+			canvas { width: 100%; height: 100%; background-color: red;}
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+		<script>
+
+			var renderer = new THREE.WebGLRenderer({ antialias: true });
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
+
+			var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+			camera.position.set(0, 0, 100);
+			camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+			var scene = new THREE.Scene();
+			var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+
+			var geometry = new THREE.Geometry();
+
+
+
+
+			// var circleGeometry = new THREE.CircleGeometry( .2, 32 );
+			// var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+			// var circle = new THREE.Mesh( circleGeometry, material );
+
+			// circleGeometry.vertices.push(new THREE.Vector3(xOld, yOld, zOld));
+			// scene.add( circle );
+
+
+
+
+
+
+
+
+
+			  var add = 1;
+			  var randomNewDir;
+
+			  var xOld = 0;
+			  var yOld = 0;
+			  var zOld = 20;
+			  var x = add;
+			  var y = 0;
+			  var z = 20;
+			  var oldAxis = 1; // tre möjliga vägar
+			  var cameFrom;
+
+				// STAIRS
+				var thisIsAStairCase;
+				var noOfSteps;
+			  var stairsHeight = 0.4;
+			  var stairsWidth = 1;
+			  var xsOld;
+			  var xs;
+			  var ysOld;
+			  var ys;
+			  var zsOld;
+			  var zs;
+
+				var thisIsADoor;
+			  var doorHeight = 1.5;
+			  var doorWidth = 0.7;
+			  var xdOld;
+			  var xd;
+			  var ydOld;
+			  var yd;
+			  var zdOld;
+			  var zd;
+
+			  console.log("i:  before");
+			  console.log("xOld: " + xOld);
+			  console.log("x:    " + x);
+			  console.log("yOld: " + yOld);
+			  console.log("y:    " + y);
+			  console.log("cameFrom: " + cameFrom);
+
+
+
+
+
+			  for (var i = 0; i < 730; i++) {
+			  	move(xOld, yOld, zOld, x, y, z);
+
+					add 				     = Math.floor(Math.random() * 7) + 1;
+					randomNewDir     = Math.floor(Math.random() * 3) + 1;
+					thisIsAStairCase = Math.floor(Math.random() * 20) + 1;
+					thisIsADoor 		 = Math.floor(Math.random() * 9) + 1;
+
+					cameFrom = whereItCameFrom(xOld, yOld, zOld,x,y,z);
+
+					xOld = x;
+					yOld = y;
+					zOld = z;	
+					
+					// CORRIDOR
+					if(cameFrom == "left") {
+						switch(randomNewDir) {
+							case 1:	y -= add; break;
+							case 2:	y += add; break;
+							case 3:	x += add; break;
+						}
+					}
+
+					if(cameFrom == "right") {
+						switch(randomNewDir) {
+							case 1:	y -= add; break;
+							case 2:	y += add; break;
+							case 3:	x -= add;	break;
+						}
+					}
+
+					if(cameFrom == "bottom") {
+						switch(randomNewDir) {
+							case 1:	x += add; break;
+							case 2:	x -= add; break;
+							case 3:	y += add; break;
+						}
+					}
+
+					if(cameFrom == "top") {
+						switch(randomNewDir) {
+							case 1:	x += add; break;
+							case 2:	x -= add; break;
+							case 3:	y -= add; break;
+						}
+					}
+
+
+
+
+
+
+
+					// STAIRS
+					if(thisIsAStairCase == 1) {
+
+						// variabler isolerade till trappor
+						xs = xOld;
+						ys = yOld;
+						zs = zOld;
+
+						xsOld = xOld;
+						ysOld = yOld;
+						zsOld = zOld;
+
+						noOfSteps = Math.floor(Math.random() * 10) + 8;
+						
+						if (cameFrom == "bottom") {
+							for (var j = 0; j < noOfSteps; j++) {
+								xs += stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								ys += stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;					
+
+								xs -= stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								zs -= stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								xOld = xs;
+								yOld = ys;
+								zOld = zs;
+
+								x = xOld;
+								y = yOld + add;
+								z = zOld;
+
+							}
+						}
+
+						if (cameFrom == "right") {
+							for (var j = 0; j < noOfSteps; j++) {
+								ys += stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								xs -= stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;					
+
+								ys -= stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								zs -= stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								xOld = xs;
+								yOld = ys;
+								zOld = zs;
+
+								x = xOld - add;
+								y = yOld;
+								z = zOld;
+							}
+						}
+
+						if (cameFrom == "top") {
+							for (var j = 0; j < noOfSteps; j++) {
+								xs += stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								ys -= stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;					
+
+								xs -= stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								zs -= stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								xOld = xs;
+								yOld = ys;
+								zOld = zs;
+
+								x = xOld;
+								y = yOld - add;
+								z = zOld;
+							}
+						}
+
+						if (cameFrom == "left") {
+							for (var j = 0; j < noOfSteps; j++) {
+								ys += stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								xs += stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;					
+
+								ys -= stairsWidth;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								zs -= stairsHeight;
+								move(xsOld, ysOld, zsOld, xs, ys, zs);
+								xsOld = xs;   ysOld = ys;   zsOld = zs;
+
+								xOld = xs;
+								yOld = ys;
+								zOld = zs;
+
+								x = xOld + add;
+								y = yOld;
+								z = zOld;
+							}
+						}						
+					}
+
+
+
+
+
+
+
+
+
+					// DOORS
+					if(thisIsADoor == 1) {
+
+						// variabler isolerade till trappor
+						xd = xOld;
+						yd = yOld;
+						zd = zOld;
+
+						xdOld = xOld;
+						ydOld = yOld;
+						zdOld = zOld;
+						
+						if (cameFrom == "bottom") {
+								zd += doorHeight;
+								move(xdOld, ydOld, zdOld, xd, yd, zd);
+								xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+								yd += doorWidth;
+								move(xdOld, ydOld, zdOld, xd, yd, zd);
+								xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+								zd -= doorHeight;
+								move(xdOld, ydOld, zdOld, xd, yd, zd);
+								xdOld = xd;   ydOld = yd;   zdOld = zd;					
+
+								xOld = xd;
+								yOld = yd;
+								zOld = zd;
+
+								x = xOld;
+								y = yOld + add;
+								z = zOld;
+
+							}
+
+						if (cameFrom == "right") {
+							zd += doorHeight;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+							xd -= doorWidth;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+							zd -= doorHeight;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;					
+
+								xOld = xd;
+								yOld = yd;
+								zOld = zd;
+
+								x = xOld - doorWidth;
+								y = yOld;
+								z = zOld;
+							}
+
+						if (cameFrom == "top") {
+							zd += doorHeight;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+							yd -= doorWidth;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+							zd -= doorHeight;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;					
+
+								xOld = xd;
+								yOld = yd;
+								zOld = zd;
+
+								x = xOld;
+								y = yOld - add;
+								z = zOld;
+							}
+
+						if (cameFrom == "left") {
+							zd += doorHeight;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+							xd += doorWidth;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;
+
+							zd -= doorHeight;
+							move(xdOld, ydOld, zdOld, xd, yd, zd);
+							xdOld = xd;   ydOld = yd;   zdOld = zd;					
+
+								xOld = xd;
+								yOld = yd;
+								zOld = zd;
+
+								x = xOld + add;
+								y = yOld;
+								z = zOld;
+							}
+					}
+
+
+
+
+
+
+
+
+					console.log("   ");
+					console.log("i:  " + i);
+					console.log("xOld: " + xOld);
+					console.log("x:    " + x);
+					console.log("yOld: " + yOld);
+					console.log("y:    " + y);
+					console.log("cameFrom: " + cameFrom);
+			  }
+			  
+			var line = new THREE.Line(geometry, material);
+
+			scene.add(line);
+			// line.rotation.z += 1;
+			line.rotation.x -= 1.1;
+
+			var render = function () {
+				requestAnimationFrame( render );
+				// line.rotation.x -= 0.01;
+				line.rotation.z -= 0.0005;
+				renderer.render(scene, camera);
+			};
+
+			render();
+
+
+
+
+			function move(xOld, yOld, zOld, x, y, z) {
+				geometry.vertices.push(new THREE.Vector3(xOld, yOld, zOld));
+				geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+			}
+
+
+
+
+			function whereItCameFrom(xOld, yOld, zOld, x, y, z) {
+				if(xOld < x){
+					return "left"; // den kom från pos X mot neg X. från HÖGER
+				}
+				if(xOld > x){
+					return "right"; // den kom från neg X mot pos X. från VÄNSTER
+				}
+				if(xOld == x){
+					if(yOld < y){
+						return "bottom"; // den kom från neg Y mot pos Y. UNDERIFRÅN
+					}
+					if(yOld > y){
+						return "top"; // den kom från pos Y mot neg Y. OVANIFRÅN
+					}
+				}
+			};
+
+
+		</script>
+	</body>
+</html>
