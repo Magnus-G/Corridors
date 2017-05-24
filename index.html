@@ -13,7 +13,7 @@
 		<script src="js/three.js"></script>
 		<script>
 
-			var iterations = 400;
+			var iterations = 1000;
 
 			var radius = 100;
 			var constant = 1;
@@ -72,245 +72,155 @@
 
 			scene.add(mesh);
 
-			// var circleGeometry = new THREE.CircleGeometry( 1.2, 32 );
-			// var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-			// var circle = new THREE.Mesh( circleGeometry, material );
-			// circleGeometry.vertices.push(new THREE.Vector3(0, -z, 0));
-			// scene.add( circle );
+		  console.log("i:  before");
+		  console.log("xOld: " + xOld);
+		  console.log("x:    " + x);
+		  console.log("yOld: " + yOld);
+		  console.log("y:    " + y);
+		  console.log("cameFrom: " + cameFrom);
 
+		  geometry.vertices.push(new THREE.Vector3(xOld, yOld, zOld));
 
+		  for (var i = 0; i < iterations; i++) {
 
+				thisIsAStairCase = Math.floor(Math.random() * 20) + 1;
+				thisIsADoor 		 = Math.floor(Math.random() * 9) + 1;
+				add 				     = Math.floor(Math.random() * 7) + 1;
+				randomNewDir     = Math.floor(Math.random() * 3) + 1;
 
+				if (i == 0) {
+					thisIsAStairCase = 1;
+				}
+				
+				// CORRIDOR
+				if (thisIsAStairCase != 1 && thisIsADoor != 1) {
+					cameFrom = whereItCameFrom(xOld, yOld, zOld,x,y,z);
+					xOld = x;
+					yOld = y;
+					zOld = z;	
+				  if(cameFrom == "left") {
+				    switch(randomNewDir) {
+				      case 1: y -= add; break; case 2: y += add; break; case 3: x += add; break;
+				    }
+				  }
+				  if(cameFrom == "right") {
+				    switch(randomNewDir) {
+				      case 1: y -= add; break; case 2: y += add; break; case 3: x -= add; break;
+				    }
+				  }
+				  if(cameFrom == "bottom") {
+				    switch(randomNewDir) {
+				      case 1: x += add; break; case 2: x -= add; break; case 3: y += add; break;
+				    }
+				  }
+				  if(cameFrom == "top") {
+				    switch(randomNewDir) {
+				      case 1: x += add; break; case 2: x -= add; break; case 3: y -= add; break;
+				    }
+				  }
+		  		geometry.vertices.push(new THREE.Vector3(x,    y,    z));
+				}
 
-			  console.log("i:  before");
-			  console.log("xOld: " + xOld);
-			  console.log("x:    " + x);
-			  console.log("yOld: " + yOld);
-			  console.log("y:    " + y);
-			  console.log("cameFrom: " + cameFrom);
+				// // STAIRS
+				if(thisIsAStairCase == 1) {
+					cameFrom = whereItCameFrom(xOld, yOld, zOld,x,y,z);
+					xOld = x;
+					yOld = y;
+					zOld = z;	
+					noOfSteps = Math.floor(Math.random() * 10) + 8;						
+					if (cameFrom == "bottom") {
+						for (var j = 0; j < noOfSteps; j++) {
+							z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y += stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+						}
+						y += add; geometry.vertices.push(new THREE.Vector3(x, y, z));
+					}
+					if (cameFrom == "right") {
+						for (var j = 0; j < noOfSteps; j++) {
+							z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+						}
+						x -= add; geometry.vertices.push(new THREE.Vector3(x, y, z));
+					}
+					if (cameFrom == "top") {
+						for (var j = 0; j < noOfSteps; j++) {
+							z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+						}
+						y -= add; geometry.vertices.push(new THREE.Vector3(x, y, z));
+					}
+					if (cameFrom == "left") {
+						for (var j = 0; j < noOfSteps; j++) {
+							z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x += stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+						}
+						x += add; geometry.vertices.push(new THREE.Vector3(x, y, z));
+					}
+				}
 
-
-			  geometry.vertices.push(new THREE.Vector3(xOld, yOld, zOld));
-
-			  for (var i = 0; i < iterations; i++) {
-
-					thisIsAStairCase = Math.floor(Math.random() * 20) + 1;
-					thisIsADoor 		 = Math.floor(Math.random() * 9) + 1;
-					add 				     = Math.floor(Math.random() * 7) + 1;
-					randomNewDir     = Math.floor(Math.random() * 3) + 1;
+				// DOORS
+				if(thisIsADoor == 1) {
 
 					cameFrom = whereItCameFrom(xOld, yOld, zOld,x,y,z);
 					xOld = x;
 					yOld = y;
 					zOld = z;	
-
-					
-					// CORRIDOR
-					  if(cameFrom == "left") {
-					    switch(randomNewDir) {
-					      case 1: y -= add; break; case 2: y += add; break; case 3: x += add; break;
-					    }
-					  }
-
-					  if(cameFrom == "right") {
-					    switch(randomNewDir) {
-					      case 1: y -= add; break; case 2: y += add; break; case 3: x -= add; break;
-					    }
-					  }
-
-					  if(cameFrom == "bottom") {
-					    switch(randomNewDir) {
-					      case 1: x += add; break; case 2: x -= add; break; case 3: y += add; break;
-					    }
-					  }
-
-					  if(cameFrom == "top") {
-					    switch(randomNewDir) {
-					      case 1: x += add; break; case 2: x -= add; break; case 3: y -= add; break;
-					    }
-					  }
-
-			  	geometry.vertices.push(new THREE.Vector3(x,    y,    z));
-
-					// // STAIRS
-					if(thisIsAStairCase == 1) {
-
-						cameFrom = whereItCameFrom(xOld, yOld, zOld,x,y,z);
-						xOld = x;
-						yOld = y;
-						zOld = z;	
-
-						noOfSteps = Math.floor(Math.random() * 10) + 8;
-						
-						if (cameFrom == "bottom") {
-							for (var j = 0; j < noOfSteps; j++) {
-								z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								x += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								y += stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								x -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-							}
+					if (cameFrom == "bottom") {
+							z += doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y += doorWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							z -= doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							xOld = x;
+							yOld = y;
+							zOld = z;
 							y += add; geometry.vertices.push(new THREE.Vector3(x, y, z));
-						}
-
-						if (cameFrom == "right") {
-							for (var j = 0; j < noOfSteps; j++) {
-								z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								y += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								x -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								y -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-							}
-							x -= add; geometry.vertices.push(new THREE.Vector3(x, y, z));
-						}
-
-						if (cameFrom == "top") {
-							for (var j = 0; j < noOfSteps; j++) {
-								z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								x += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								y -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								x -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-							}
-							y -= add; geometry.vertices.push(new THREE.Vector3(x, y, z));
-						}
-
-						if (cameFrom == "left") {
-							for (var j = 0; j < noOfSteps; j++) {
-								z -= stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								y += stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								x += stairsHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
-								y -= stairsWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
-							}
-							x += add; geometry.vertices.push(new THREE.Vector3(x, y, z));
-						}
 					}
+					if (cameFrom == "right") {
+							z += doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x -= doorWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							z -= doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							xOld = x;
+							yOld = y;
+							zOld = z;					
+							x -= add; geometry.vertices.push(new THREE.Vector3(x, y, z));
+					}
+					if (cameFrom == "top") {
+							z += doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							y -= doorWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							z -= doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							xOld = x;
+							yOld = y;
+							zOld = z;					
+							y -= add; geometry.vertices.push(new THREE.Vector3(x, y, z));
+					}
+					if (cameFrom == "left") {
+							z += doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							x += doorWidth; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							z -= doorHeight; geometry.vertices.push(new THREE.Vector3(x, y, z));
+							xOld = x;
+							yOld = y;
+							zOld = z;
+							x += add; geometry.vertices.push(new THREE.Vector3(x, y, z));
+					}
+				}
 
-
-
-
-
-
-
-
-
-					// // DOORS
-					// if(thisIsADoor == 1) {
-
-					// 	// variabler isolerade till trappor
-					// 	xd = xOld;
-					// 	yd = yOld;
-					// 	zd = zOld;
-
-					// 	xdOld = xOld;
-					// 	ydOld = yOld;
-					// 	zdOld = zOld;
-						
-					// 	if (cameFrom == "bottom") {
-					// 			zd += doorHeight;
-					// 			move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 			xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 			yd += doorWidth;
-					// 			move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 			xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 			zd -= doorHeight;
-					// 			move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 			xdOld = xd;   ydOld = yd;   zdOld = zd;					
-
-					// 			xOld = xd;
-					// 			yOld = yd;
-					// 			zOld = zd;
-
-					// 			x = xOld;
-					// 			y = yOld + add;
-					// 			z = zOld;
-
-					// 		}
-
-					// 	if (cameFrom == "right") {
-					// 		zd += doorHeight;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 		xd -= doorWidth;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 		zd -= doorHeight;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;					
-
-					// 			xOld = xd;
-					// 			yOld = yd;
-					// 			zOld = zd;
-
-					// 			x = xOld - doorWidth;
-					// 			y = yOld;
-					// 			z = zOld;
-					// 		}
-
-					// 	if (cameFrom == "top") {
-					// 		zd += doorHeight;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 		yd -= doorWidth;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 		zd -= doorHeight;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;					
-
-					// 			xOld = xd;
-					// 			yOld = yd;
-					// 			zOld = zd;
-
-					// 			x = xOld;
-					// 			y = yOld - add;
-					// 			z = zOld;
-					// 		}
-
-					// 	if (cameFrom == "left") {
-					// 		zd += doorHeight;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 		xd += doorWidth;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;
-
-					// 		zd -= doorHeight;
-					// 		move(xdOld, ydOld, zdOld, xd, yd, zd);
-					// 		xdOld = xd;   ydOld = yd;   zdOld = zd;					
-
-					// 			xOld = xd;
-					// 			yOld = yd;
-					// 			zOld = zd;
-
-					// 			x = xOld + add;
-					// 			y = yOld;
-					// 			z = zOld;
-					// 		}
-					// }
-
-
-
-
-
-
-
-
-					console.log("   ");
-					console.log("i:  " + i);
-					console.log("xOld: " + xOld);
-					console.log("x:    " + x);
-					console.log("yOld: " + yOld);
-					console.log("y:    " + y);
-					console.log("cameFrom: " + cameFrom);
-			  }
-			  
+				console.log("   ");
+				console.log("i:  " + i);
+				console.log("xOld: " + xOld);
+				console.log("x:    " + x);
+				console.log("yOld: " + yOld);
+				console.log("y:    " + y);
+				console.log("cameFrom: " + cameFrom);
+		  }
+		  
 			var line = new THREE.Line(geometry, material);
-
 			scene.add(line);
 
 			mesh.rotation.x = -(Math.PI / 2);
@@ -320,7 +230,7 @@
 				requestAnimationFrame( render );
 				camera.position.z = line.position.z + radius * Math.cos( constant * elapsedTime );         
 				camera.position.x = line.position.x + radius * Math.sin( constant * elapsedTime );
-				// camera.position.y = 50;
+				camera.position.y = 50;
 				camera.position.y = line.position.x + radius/2 * Math.sin( constant * elapsedTime );
 				camera.lookAt( line.position );
 				elapsedTime+= 0.0005;
