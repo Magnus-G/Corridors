@@ -255,5 +255,30 @@
 				}
 			};
 		</script>
+
+		<audio id="myAudio">
+		  <source src="xerox.mp3" type="audio/mpeg">
+		</audio>
+
+		<script>
+		  var random = Math.random();
+		  var time = 10;
+		  var x = document.getElementById("myAudio"); 
+
+		  x.play(); 
+
+		  setInterval(function(){ 
+		    random = Math.random();
+		    time = random * 400;
+		    document.body.style.background = "rgb(0, 0," + time + ")";
+		    console.log(time);
+		    x.play(); 
+		    x.currentTime = time;
+		  }, 10000);
+
+		</script>
+
+
+
 	</body>
 </html>
