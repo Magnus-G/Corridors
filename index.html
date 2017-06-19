@@ -4,16 +4,18 @@
 		<meta charset=utf-8>
 		<title>Corridors</title>
 		<style>
-			body { margin: 0;}
+			body { margin: 0; background-color: black;}
 			canvas { width: 100%; height: 100%; background-color: black;}
 		</style>
 	</head>
 	<body>
 		<canvas id="myCanvas"></canvas>
 		<script src="js/three.js"></script>
+		<script src="js/SVGRenderer.js"></script>
+		<script src="js/Projector.js"></script>
 		<script>
 
-			var iterations = 1000;
+			var iterations = 4000;
 
 			var radius = 80;
 			var constant = 1;
@@ -57,6 +59,7 @@
 			camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 			var scene = new THREE.Scene();
+			
 			var material = new THREE.LineBasicMaterial({ color: 0xffffff });
 			var geometry = new THREE.Geometry();
 
@@ -65,8 +68,8 @@
 			var light1 = new THREE.PointLight(0xffffff, 0.5);
 			scene.add(light1);
 
-			var geometryTest = new THREE.BoxGeometry(1,1,2);
-			var materialTest = new THREE.MeshLambertMaterial({color: 0xffffff});
+			var geometryTest = new THREE.BoxGeometry(.1,1,2);
+			var materialTest = new THREE.MeshLambertMaterial({color: 0x888888});
 			var mesh = new THREE.Mesh(geometryTest, materialTest);
 			mesh.position.set(0,z+1,0);
 
@@ -85,7 +88,7 @@
 
 				thisIsAStairCase = Math.floor(Math.random() * 20) + 1;
 				thisIsADoor 		 = Math.floor(Math.random() * 9) + 1;
-				add 				     = Math.floor(Math.random() * 7) + 1;
+				add 				     = Math.floor(Math.random() * 3) + 1;
 				randomNewDir     = Math.floor(Math.random() * 3) + 1;
 
 				if (i == 0) {
@@ -270,8 +273,6 @@
 		  setInterval(function(){ 
 		    random = Math.random();
 		    time = random * 400;
-		    document.body.style.background = "rgb(0, 0," + time + ")";
-		    console.log(time);
 		    x.play(); 
 		    x.currentTime = time;
 		  }, 10000);
